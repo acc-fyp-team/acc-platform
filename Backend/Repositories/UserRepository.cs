@@ -18,6 +18,9 @@ namespace Backend.Repositories
         public Task<User?> GetByUsernameAsync(string username) =>
             _db.Users.FirstOrDefaultAsync(u => u.Username == username);
 
+        public Task<User?> GetByIdAsync(int userId) =>
+            _db.Users.FirstOrDefaultAsync(u => u.UserID == userId);
+
         public async Task UpdateLastLoginAsync(User user)
         {
             user.LastLogin = DateTime.UtcNow;

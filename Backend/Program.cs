@@ -24,9 +24,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Our own classes, registered so the framework can hand them to controllers.
 builder.Services.AddSingleton<TokenService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IPermissionService, PermissionService>();
 
-// Every request with a token is checked against these rules before it reaches a controller.
+// Every request carrying a token is checked against these rules before it reaches a controller.
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {

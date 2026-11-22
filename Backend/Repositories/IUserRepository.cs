@@ -6,6 +6,7 @@ namespace Backend.Repositories
     public interface IUserRepository
     {
         Task<User?> GetByUsernameAsync(string username);
+        Task<User?> GetByIdAsync(int userId);
         Task UpdateLastLoginAsync(User user);
     }
 }
