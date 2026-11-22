@@ -14,6 +14,7 @@ namespace Backend.Data
         public DbSet<User> Users => Set<User>();
         public DbSet<UserPermission> UserPermissions => Set<UserPermission>();
         public DbSet<Client> Clients => Set<Client>();
+        public DbSet<Employee> Employees => Set<Employee>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -32,6 +33,12 @@ namespace Backend.Data
             // Two clients can never share a CNIC.
             modelBuilder.Entity<Client>()
                 .HasIndex(c => c.CNIC)
+                .IsUnique();
+
+            // Employee CNIC is optional, but two employees can't share one.
+            // PostgreSQL treats NULLs as different, so blank CNICs are fine.
+            modelBuilder.Entity<Employee>()
+                .HasIndex(e => e.CNIC)
                 .IsUnique();
         }
     }
