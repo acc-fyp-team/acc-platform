@@ -13,6 +13,7 @@ namespace Backend.Data
 
         public DbSet<User> Users => Set<User>();
         public DbSet<UserPermission> UserPermissions => Set<UserPermission>();
+        public DbSet<Client> Clients => Set<Client>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -26,6 +27,11 @@ namespace Backend.Data
             // One row per user + module + action, so a permission can never be stored twice.
             modelBuilder.Entity<UserPermission>()
                 .HasIndex(p => new { p.UserID, p.Module, p.Action })
+                .IsUnique();
+
+            // Two clients can never share a CNIC.
+            modelBuilder.Entity<Client>()
+                .HasIndex(c => c.CNIC)
                 .IsUnique();
         }
     }
