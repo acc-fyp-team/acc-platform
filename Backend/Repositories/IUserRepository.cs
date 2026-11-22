@@ -1,0 +1,11 @@
+using Backend.Models.Entities;
+
+namespace Backend.Repositories
+{
+    // The database operations the rest of the app needs for users.
+    public interface IUserRepository
+    {
+        Task<User?> GetByUsernameAsync(string username);
+        Task UpdateLastLoginAsync(User user);
+    }
+}
