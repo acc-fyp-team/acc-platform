@@ -10,10 +10,22 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+const string DevCorsPolicy = "DevCors";
+
 builder.Services.AddControllers();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+// The React dev server runs on a different port, so the browser treats it as a
+// different site. Without this, every call from the web app would be blocked.
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(DevCorsPolicy, policy =>
+        policy.WithOrigins("http://localhost:5173", "http://127.0.0.1:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod());
+});
 
 // Database: PostgreSQL on Neon.
 // The connection string is never kept in the repo. Locally it lives in
@@ -66,6 +78,9 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.MapScalarApiReference();   // browsable API docs at /scalar/v1
 }
+
+// CORS runs first so the browser's preflight check is answered.
+app.UseCors(DevCorsPolicy);
 
 app.UseHttpsRedirection();
 
