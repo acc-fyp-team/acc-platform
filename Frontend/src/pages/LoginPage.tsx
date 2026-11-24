@@ -28,77 +28,108 @@ export default function LoginPage() {
     }
   }
 
+  const fieldClass =
+    'w-full rounded-[10px] border border-line-strong bg-card px-3.5 py-2.5 text-ink outline-none transition placeholder:text-subtle focus:border-brand focus:ring-4 focus:ring-brand/10'
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-100 px-4">
-      <div className="w-full max-w-sm">
-        <div className="mb-8 text-center">
-          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-900 text-lg font-bold text-white">
-            ACC
-          </div>
-          <h1 className="text-xl font-semibold text-slate-900">ACC Platform</h1>
-          <p className="mt-1 text-sm text-slate-500">Sign in to continue</p>
+    <div className="flex min-h-screen">
+      {/* Brand panel - hidden on small screens */}
+      <div className="hidden w-[44%] flex-col justify-between bg-panel p-12 text-white lg:flex">
+        <div className="flex items-center gap-3">
+          <span className="font-heading text-3xl font-bold text-brand">ACC</span>
+          <span className="h-9 w-px bg-white/15" />
+          <span className="text-xs leading-tight font-medium tracking-wide text-white/60">
+            ADMIN
+            <br />
+            PORTAL
+          </span>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
-        >
-          {error && (
-            <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-              {error}
-            </div>
-          )}
+        <div>
+          <h2 className="font-heading text-3xl leading-snug font-semibold">
+            Run every site,
+            <br />
+            from one place.
+          </h2>
+          <p className="mt-4 max-w-sm text-white/55">
+            Projects, materials, attendance and billing - with proof behind every
+            rupee spent.
+          </p>
+        </div>
 
-          <label className="mb-4 block">
-            <span className="mb-1.5 block text-sm font-medium text-slate-700">
-              Username
-            </span>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              autoComplete="username"
-              required
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10"
-            />
-          </label>
-
-          <label className="mb-4 block">
-            <span className="mb-1.5 block text-sm font-medium text-slate-700">
-              Password
-            </span>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete="current-password"
-              required
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10"
-            />
-          </label>
-
-          <label className="mb-5 flex items-center gap-2 text-sm text-slate-600">
-            <input
-              type="checkbox"
-              checked={keepSignedIn}
-              onChange={(e) => setKeepSignedIn(e.target.checked)}
-              className="h-4 w-4 rounded border-slate-300"
-            />
-            Keep me signed in
-          </label>
-
-          <button
-            type="submit"
-            disabled={busy}
-            className="w-full rounded-lg bg-slate-900 px-4 py-2.5 font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {busy ? 'Signing in...' : 'Sign in'}
-          </button>
-        </form>
-
-        <p className="mt-6 text-center text-xs text-slate-400">
+        <p className="text-xs text-white/35">
           AI-Powered Construction Company ERP
         </p>
+      </div>
+
+      {/* Form */}
+      <div className="flex flex-1 items-center justify-center bg-page px-6 py-12">
+        <div className="w-full max-w-sm">
+          <div className="mb-8 lg:hidden">
+            <span className="font-heading text-3xl font-bold text-brand">ACC</span>
+          </div>
+
+          <h1 className="font-heading text-2xl font-semibold text-ink">Sign in</h1>
+          <p className="mt-1.5 text-sm text-muted">
+            Enter your details to open the portal.
+          </p>
+
+          <form onSubmit={handleSubmit} className="mt-8">
+            {error && (
+              <div className="mb-5 rounded-[10px] border border-error/25 bg-error/8 px-3.5 py-2.5 text-sm text-error">
+                {error}
+              </div>
+            )}
+
+            <label className="mb-4 block">
+              <span className="mb-1.5 block text-sm font-medium text-ink">
+                Username
+              </span>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="admin"
+                autoComplete="username"
+                required
+                className={fieldClass}
+              />
+            </label>
+
+            <label className="mb-4 block">
+              <span className="mb-1.5 block text-sm font-medium text-ink">
+                Password
+              </span>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                autoComplete="current-password"
+                required
+                className={fieldClass}
+              />
+            </label>
+
+            <label className="mb-6 flex items-center gap-2.5 text-sm text-muted">
+              <input
+                type="checkbox"
+                checked={keepSignedIn}
+                onChange={(e) => setKeepSignedIn(e.target.checked)}
+                className="h-4 w-4 rounded border-line-strong accent-brand"
+              />
+              Keep me signed in
+            </label>
+
+            <button
+              type="submit"
+              disabled={busy}
+              className="w-full rounded-[10px] bg-brand px-4 py-3 font-medium text-white shadow-sm transition hover:bg-brand-dark disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {busy ? 'Signing in...' : 'Sign in'}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   )

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { ShieldCheck, UserPlus, Users, Briefcase } from 'lucide-react'
 import { useAuth } from '../auth/AuthContext'
-import { api, errorMessage } from '../lib/api'
+import { api } from '../lib/api'
+import AppLayout from '../components/AppLayout'
 
 type Permission = {
   module: string
@@ -10,92 +11,115 @@ type Permission = {
   requiresApproval: boolean
 }
 
+// A single number card, in the ACC style: pale brand icon square,
+// large figure, muted label.
+function StatCard({
+  icon: Icon,
+  value,
+  label,
+}: {
+  icon: typeof Users
+  value: string | number
+  label: string
+}) {
+  return (
+    <div className="rounded-card border border-line bg-card p-5">
+      <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-[10px] bg-brand-soft text-brand">
+        <Icon size={20} />
+      </div>
+      <div className="font-heading text-3xl font-semibold text-ink">{value}</div>
+      <div className="mt-1 text-sm text-muted">{label}</div>
+    </div>
+  )
+}
+
 export default function DashboardPage() {
-  const { user, logout } = useAuth()
-  const navigate = useNavigate()
+  const { user } = useAuth()
 
   const [permissions, setPermissions] = useState<Permission[]>([])
-  const [error, setError] = useState<string | null>(null)
+  const [clientCount, setClientCount] = useState<number | null>(null)
+  const [employeeCount, setEmployeeCount] = useState<number | null>(null)
 
-  // Fetch the signed-in user's permissions. This is the proof that the
-  // token works: the request only succeeds because it carries the token.
   useEffect(() => {
+    // All three calls only succeed because the token travels with them.
     api
       .get<Permission[]>('/api/permissions/me')
       .then((res) => setPermissions(res.data))
-      .catch((err) => setError(errorMessage(err, 'Could not load permissions.')))
+      .catch(() => setPermissions([]))
+
+    api
+      .get<unknown[]>('/api/clients?status=Active')
+      .then((res) => setClientCount(res.data.length))
+      .catch(() => setClientCount(null))
+
+    api
+      .get<unknown[]>('/api/employees?status=Active')
+      .then((res) => setEmployeeCount(res.data.length))
+      .catch(() => setEmployeeCount(null))
   }, [])
 
-  function handleLogout() {
-    logout()
-    navigate('/login', { replace: true })
-  }
-
-  // The modules this user may at least view.
-  const modules = [...new Set(permissions.filter((p) => p.isAllowed).map((p) => p.module))]
+  const firstName = user?.fullName?.split(' ')[0] ?? 'there'
+  const allowedModules = [
+    ...new Set(permissions.filter((p) => p.isAllowed).map((p) => p.module)),
+  ]
 
   return (
-    <div className="min-h-screen bg-slate-100">
-      <header className="border-b border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-900 text-sm font-bold text-white">
-              ACC
-            </div>
-            <span className="font-semibold text-slate-900">ACC Platform</span>
-          </div>
+    <AppLayout title="Dashboard">
+      {/* Welcome banner */}
+      <div className="rounded-card bg-gradient-to-r from-[#1A1A1A] via-[#241611] to-[#3A1C0E] px-7 py-8 text-white">
+        <h2 className="font-heading text-2xl font-semibold">
+          Welcome, <span className="text-brand">{firstName}</span>
+        </h2>
+        <p className="mt-1.5 text-white/65">
+          Here's what's happening with your company today.
+        </p>
+      </div>
 
-          <div className="flex items-center gap-4">
-            <div className="text-right">
-              <div className="text-sm font-medium text-slate-900">{user?.fullName}</div>
-              <div className="text-xs text-slate-500">{user?.role}</div>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 transition hover:bg-slate-50"
+      {/* Numbers */}
+      <div className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard
+          icon={UserPlus}
+          value={clientCount ?? '--'}
+          label="Active Clients"
+        />
+        <StatCard
+          icon={Users}
+          value={employeeCount ?? '--'}
+          label="Active Employees"
+        />
+        <StatCard
+          icon={ShieldCheck}
+          value={permissions.filter((p) => p.isAllowed).length}
+          label="Permissions Granted"
+        />
+        <StatCard icon={Briefcase} value={user?.role ?? '--'} label="Your Role" />
+      </div>
+
+      {/* Access */}
+      <div className="mt-6 rounded-card border border-line bg-card p-6">
+        <h3 className="font-heading font-semibold text-ink">Modules you can open</h3>
+        <p className="mt-1 text-sm text-muted">
+          Loaded from the server for your account.
+        </p>
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          {allowedModules.length === 0 && (
+            <span className="text-sm text-subtle">No modules granted yet.</span>
+          )}
+          {allowedModules.map((module) => (
+            <span
+              key={module}
+              className="rounded-full bg-raised px-3 py-1.5 text-sm text-muted"
             >
-              Sign out
-            </button>
-          </div>
+              {module}
+            </span>
+          ))}
         </div>
-      </header>
+      </div>
 
-      <main className="mx-auto max-w-5xl px-6 py-10">
-        <h1 className="text-2xl font-semibold text-slate-900">
-          Welcome, {user?.fullName}
-        </h1>
-        <p className="mt-1 text-slate-500">
-          You are signed in as <span className="font-medium">{user?.username}</span>.
-        </p>
-
-        {error && (
-          <div className="mt-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {error}
-          </div>
-        )}
-
-        <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6">
-          <h2 className="font-medium text-slate-900">Your access</h2>
-          <p className="mt-1 text-sm text-slate-500">
-            {permissions.length} permissions loaded from the server.
-          </p>
-
-          <div className="mt-4 flex flex-wrap gap-2">
-            {modules.map((module) => (
-              <span
-                key={module}
-                className="rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-700"
-              >
-                {module}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <p className="mt-8 text-sm text-slate-400">
-          Clients and Employees screens come next.
-        </p>
-      </main>
-    </div>
+      <p className="mt-6 text-sm text-subtle">
+        Clients and Employees screens are next.
+      </p>
+    </AppLayout>
   )
 }
