@@ -38,7 +38,7 @@ const NAV_SECTIONS: { title: string; items: NavItem[] }[] = [
     title: 'Management',
     items: [
       { label: 'Users', icon: Users },
-      { label: 'Clients', icon: UserPlus },
+      { label: 'Clients', icon: UserPlus, to: '/clients' },
       { label: 'Employees', icon: User },
       { label: 'Materials', icon: Package },
       { label: 'Assignments', icon: CalendarDays },

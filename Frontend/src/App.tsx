@@ -2,14 +2,15 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import ProtectedRoute from './components/ProtectedRoute'
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
+import ClientsPage from './pages/ClientsPage'
 
 // Every page of the app is listed here.
-// "/dashboard" is wrapped in ProtectedRoute, so a signed-out visitor
-// is sent to the login page instead.
+// Pages inside ProtectedRoute need a signed-in user.
 export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+
       <Route
         path="/dashboard"
         element={
@@ -18,6 +19,16 @@ export default function App() {
           </ProtectedRoute>
         }
       />
+
+      <Route
+        path="/clients"
+        element={
+          <ProtectedRoute>
+            <ClientsPage />
+          </ProtectedRoute>
+        }
+      />
+
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   )
