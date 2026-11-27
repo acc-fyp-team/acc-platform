@@ -19,8 +19,8 @@ reporting where it has been.
 | Member | Roll number | Role |
 |---|---|---|
 | M. Hamid Idrees | F2023065008 | Team Lead — backend, authentication, web portal, design system |
-| Faseeha Rashid | F2023065035 | Core modules — clients, employees, materials, attendance |
-| Rehan Ishaq | F2023065046 | Core modules — projects, billing, mobile application |
+| Faseeha | — | Core modules — clients, employees, materials, attendance |
+| Rehan | — | Mobile application and field data capture |
 
 ---
 
@@ -191,3 +191,7 @@ and employees modules, the web portal shell and the mobile application scaffold 
 | 4 | Voice input, WhatsApp integration, offline sync | Planned |
 
 ---
+
+## License
+
+Academic project. Not licensed for production or commercial use.
