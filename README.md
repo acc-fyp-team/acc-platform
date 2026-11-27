@@ -1,136 +1,67 @@
 # ACC Platform
 
-**AI-Powered Construction ERP with Verifiable Material & Labour Tracking and Predictive Cost Analytics**
+A construction management system for contractors, built as a Final Year Project at the
+University of Management and Technology (UMT), Lahore.
 
-Final Year Project — BS Computer Science, University of Management and Technology (UMT), Lahore.
+Contractors keep their records on paper — material deliveries in one register, labour
+attendance in another, and the costs added up by hand at the end of the month. ACC Platform
+puts all of that in one place, so the office and the site are looking at the same
+information.
 
-ACC Platform is a construction management system for small and mid-sized contractors in
-Pakistan. It replaces the paper registers and WhatsApp messages most sites still run on with
-a single record that the office and the site share. Material deliveries and daily labour
-attendance are captured at the site and confirmed by a second person before they count, so
-the cost figures the office sees can be traced back to who recorded them. On top of that
-record, the platform forecasts where a project is heading financially instead of only
-reporting where it has been.
+The system keeps records of clients, employees, materials and projects, controls who in the
+company is allowed to see and change what, and shows the current position of each project.
 
 ---
 
 ## Team
 
-| Member | Roll number | Role |
+| Member | Roll number | Works on |
 |---|---|---|
-| M. Hamid Idrees | F2023065008 | Team Lead — backend, authentication, web portal, design system |
-| Faseeha | — | Core modules — clients, employees, materials, attendance |
-| Rehan | — | Mobile application and field data capture |
+| M. Hamid Idrees | F2023065008 | Team lead — backend, authentication, web portal |
+| Faseeha Rashid | F2023065035 | Materials, attendance, salaries, reports |
+| Rehan Ishaq | F2023065046 | Projects, billing, mobile application |
 
 ---
 
-## Problem statement
+## Built with
 
-Contractors on small and mid-sized projects track material and labour on paper. The office
-learns what a site spent days or weeks later, by which point the money is already gone.
-Two problems follow from this:
-
-1. **Nothing is verifiable.** A delivery note or an attendance register is a single person's
-   word. There is no second confirmation, so disputes over quantities and wages cannot be
-   settled from the records.
-2. **Nothing is predictive.** By the time a cost overrun shows up in a report, the decisions
-   that caused it have already been made.
-
-ACC Platform addresses both: every material and labour entry carries a verification trail,
-and the cost data feeds a forecasting service that flags overruns while a project is still
-running.
+ASP.NET Core Web API (.NET 10) · PostgreSQL with Entity Framework Core · React with Vite and
+TypeScript · React Native with Expo
 
 ---
 
-## Key features
+## What is working so far
 
-- **Role-based access control** — eleven modules with five actions each, assigned per user
-- **Verification chain** — material and labour entries require independent confirmation
-  before they affect project costs
-- **Client portal** — clients see progress and billing for their own projects only
-- **Predictive cost analytics** — a Python service that forecasts project cost from the
-  recorded history
-- **Mobile field app** — offline-capable capture of deliveries and attendance from the site
-- **Voice and WhatsApp input** — for site staff who do not use a dashboard
+- Sign in and sign out
+- Roles and permissions — an administrator decides which modules each user can open, and what
+  they can do inside them
+- Clients — add, view, edit, delete, search and filter
+- Employees — add, view, edit, delete, search and filter
+- Dashboard showing current counts
 
----
-
-## Technology stack
-
-| Layer | Technology |
-|---|---|
-| Backend API | ASP.NET Core Web API (.NET 10), N-tier (Controller → Service → Repository) |
-| Database | PostgreSQL, hosted on Neon |
-| ORM | Entity Framework Core 10 with Npgsql |
-| Authentication | JWT bearer tokens, BCrypt password hashing |
-| API documentation | OpenAPI with Scalar |
-| Web portal | React 19, Vite, TypeScript, Tailwind CSS v4 |
-| Mobile app | React Native with Expo, TypeScript |
-| AI service | Python (planned — Phase 3) |
+More modules are added sprint by sprint.
 
 ---
 
-## Repository structure
+## How to run it
 
-```
-acc-platform/
-├── Backend/            ASP.NET Core Web API
-│   ├── Auth/           JWT token service, permission attributes
-│   ├── Controllers/    HTTP endpoints
-│   ├── Data/           EF Core context, migrations, seeding
-│   ├── Models/         Entities and DTOs
-│   ├── Repositories/   Data access
-│   └── Services/       Business logic
-├── Frontend/           React web portal (admin and office users)
-│   └── src/
-│       ├── auth/       Authentication context
-│       ├── components/ Shared UI — layout, modal, route guard
-│       ├── lib/        API client
-│       └── pages/      Screens
-├── Mobile/             React Native (Expo) field application
-└── ACC-Platform.slnx   Visual Studio solution
-```
+You need the .NET 10 SDK, Node.js, and a PostgreSQL database.
 
----
-
-## Getting started
-
-### Prerequisites
-
-- .NET SDK 10.0 or later
-- Node.js 20 or later
-- A PostgreSQL database (the team uses Neon)
-
-### Backend
+**Backend**
 
 ```bash
 cd Backend
-dotnet restore
-```
-
-Configuration is held in user secrets, never in the repository:
-
-```bash
-dotnet user-secrets set "ConnectionStrings:DefaultConnection" "<your PostgreSQL connection string>"
-dotnet user-secrets set "Jwt:Key" "<a random string of at least 32 characters>"
-dotnet user-secrets set "Seed:AdminUsername" "<first admin username>"
-dotnet user-secrets set "Seed:AdminPassword" "<first admin password>"
-```
-
-Apply the migrations and run:
-
-```bash
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "<your database connection string>"
+dotnet user-secrets set "Jwt:Key" "<any random text, at least 32 characters>"
+dotnet user-secrets set "Seed:AdminUsername" "<admin username>"
+dotnet user-secrets set "Seed:AdminPassword" "<admin password>"
 dotnet ef database update
 dotnet run
 ```
 
-The API listens on `http://localhost:5112`. Interactive API documentation is at
-`http://localhost:5112/scalar/v1` when running in Development.
+Runs at `http://localhost:5112`. The endpoints can be tried at `http://localhost:5112/scalar/v1`.
 
-On first run, if the `Users` table is empty, an administrator account is created from the
-seed values above.
-
-### Web portal
+**Web portal**
 
 ```bash
 cd Frontend
@@ -138,60 +69,11 @@ npm install
 npm run dev
 ```
 
-The portal runs on `http://localhost:5173`. The backend's CORS policy allows this origin
-only, so if Vite reports a different port, stop whatever is holding 5173 and start again.
+Open `http://localhost:5173` and sign in.
 
-### Mobile application
-
-See [`Mobile/README.md`](Mobile/README.md).
+**Mobile app** — see [`Mobile/README.md`](Mobile/README.md).
 
 ---
 
-## Configuration and secrets
-
-No connection string, signing key or password is committed to this repository. Local
-development uses `dotnet user-secrets`; deployments use environment variables. `appsettings`
-files contain structure only, with empty values.
-
----
-
-## Development workflow
-
-Work happens on feature branches. `main` is protected: it cannot be pushed to directly, and
-a pull request needs an approval from another team member before it can be merged.
-
-```bash
-git checkout main
-git pull origin main
-git checkout -b feature/<short-description>
-
-# make the change, then
-git add .
-git commit -m "<what the commit does>"
-git push origin feature/<short-description>
-```
-
-Open a pull request on GitHub, have another member review it, then merge and delete the
-branch. Everyone pulls `main` afterwards.
-
-Issues and sprint planning are tracked in Jira.
-
----
-
-## Project status
-
-Phase 1 (core platform) is in progress. Authentication, role-based permissions, the clients
-and employees modules, the web portal shell and the mobile application scaffold are complete.
-
-| Phase | Scope | Status |
-|---|---|---|
-| 1 | Core ERP — auth, permissions, clients, employees, materials, attendance | In progress |
-| 2 | Verification chain and client portal | Planned |
-| 3 | Predictive cost analytics (Python service) | Planned |
-| 4 | Voice input, WhatsApp integration, offline sync | Planned |
-
----
-
-## License
-
-Academic project. Not licensed for production or commercial use.
+No passwords or keys are saved in this repository. They are kept in user secrets, as shown
+above.
